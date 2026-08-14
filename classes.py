@@ -1,19 +1,22 @@
 ### BASE CLASSES ####
-from enum import Enum
+from enum import Enum, StrEnum
 from dataclasses import dataclass
 
+class StoryText(StrEnum):
+    INTRO = ""
+
 @dataclass
-class Stats():
+class Stats:
     hp: int
     attack: int
     
 class CharacterClass(Enum):
     WARRIOR = ("Krigare", "Du löser alla dina problem med våld.")
-    PRIEST = ("Präst", "Ett liv av bön har gett dig förmågan att kalla på gud för att läka sår.")
+    PRIEST = ("Präst", "Ett liv av bön har gett dig förmågan att kalla på det gudomliga för att läka sår.")
     ROUGE= ("Tjuv", "Ett liv på gatan har gett dig snabba reflexer och tivivelaktig moral.")
 
-    def __init__(self, display_name: str, description: str):
-        self.display_name = display_name
+    def __init__(self, class_name: str, description: str):
+        self.class_name = class_name
         self.description = description
 
     @property
@@ -36,15 +39,10 @@ class CharacterClass(Enum):
                         )
 
 @dataclass
-class Player:
+class PlayerCharacter:
     name: str
     class_type: CharacterClass
     stats: Stats
-
-
-
-
-
 
 class Sprite:
     def __init__(self, str_sprite: str):
