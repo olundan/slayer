@@ -1,4 +1,3 @@
-from classes import *
 #
 #warrior_sprite = Sprite("  o |\n"
 #                        "(/*\\¥\n "
