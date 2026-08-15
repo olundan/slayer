@@ -1,60 +1,63 @@
-### BASE CLASSES ####
-from enum import Enum, StrEnum
-from dataclasses import dataclass
-
-class StoryText(StrEnum):
-    INTRO = ""
+from enum import Enum
+from dataclasses import dataclass, field
 
 @dataclass
 class Stats:
     hp: int
     attack: int
-    
-class CharacterClass(Enum):
-    WARRIOR = ("Krigare", "Du löser alla dina problem med våld.")
-    PRIEST = ("Präst", "Ett liv av bön har gett dig förmågan att kalla på det gudomliga för att läka sår.")
-    ROUGE= ("Tjuv", "Ett liv på gatan har gett dig snabba reflexer och tivivelaktig moral.")
+    defence: int
 
-    def __init__(self, class_name: str, description: str):
-        self.class_name = class_name
+@dataclass
+class Entity:
+    name: str
+    sprite: Sprite
+    stats: Stats
+
+@dataclass
+class Player(Entity):
+    x: int = 0
+    y: int = 0
+    current_xp: int = 0
+    role: str = "Adventurer"
+    description: str = ""
+
+@dataclass
+class Mob(Entity):
+    exp_gain: int = 10
+
+class CharacterClass(Enum):
+    WARRIOR = ("Warrior", "Våld")
+    PRIEST = ("Priest", "Helande")
+    ROGUE = ("Rogue", "Smygande")
+
+    def __init__(self, display_name: str, description: str):
+        self.display_name = display_name
         self.description = description
 
     @property
     def initial_stats(self) -> Stats:
         match self:
             case CharacterClass.WARRIOR:
-                return Stats(
-                        hp = 20,
-                        attack = 10
-                        )
+                return Stats(hp=20, attack=10, defence=10)
             case CharacterClass.PRIEST:
-                return Stats(
-                        hp = 10,
-                        attack = 5
-                        )
-            case CharacterClass.ROUGE:
-                return Stats(
-                        hp = 15,
-                        attack = 8
-                        )
+                return Stats(hp=10, attack=5, defence=10)
+            case CharacterClass.ROGUE:
+                return Stats(hp=15, attack=8, defence=10)
 
-@dataclass
-class PlayerCharacter:
-    name: str
-    class_type: CharacterClass
-    stats: Stats
 
 class Sprite:
     def __init__(self, str_sprite: str):
-        pattern = self.BuildPattern(str_sprite)
+        self.pattern = self.build_pattern(str_sprite)
+        self.relational_map: list[tuple[int, int, str]] = self.build_rel_map()
 
-        self.relational_map: list[tuple[int,int,str]] = []
-        for dy in range(len(pattern)):
-            for dx in range(len(pattern[dy])):
-                symbol = pattern[dy][dx]
-                if symbol != ' ':
-                    self.relational_map.append((dx, dy, symbol))
-
-    def BuildPattern(self, str_sprite: str):
+    def build_pattern(self, str_sprite: str):
         return [list(line) for line in str_sprite.strip('\n').split('\n')]
 
+    def build_rel_map(self) -> list[tuple[int, int, str]]:
+        rel_map = []
+        for dy in range(len(self.pattern)):
+            for dx in range(len(self.pattern[dy])):
+                symbol = self.pattern[dy][dx]
+                if symbol != ' ':
+                    rel_map.append((dx, dy, symbol))
+        return rel_map

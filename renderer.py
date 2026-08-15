@@ -1,9 +1,15 @@
 import sys
 import time
 
+CLEAR_SCREEN = "\033[2J"
+HIDE_CURSOR  = "\033[?25l"
+SHOW_CURSOR  = "\033[?25h"
+HIGHLIGHT = "\033[7m"  
+RESET = "\033[0m"
+
 def render_string(x: int, y: int, txt: str):
     move_cursor(x, y)
-    sys.stdout.write(f"{symbol}")
+    sys.stdout.write(f"{txt}")
 
 def render_string_slow(x: int, y: int, txt: str):
     move_cursor(x, y)
@@ -18,7 +24,7 @@ def render(x: int, y: int, render_obj):
             target_x = x + dx
             target_y = y + dy
 
-            render_char(target_x, target_y, symbol)
+            render_string(target_x, target_y, symbol)
     elif isinstance(render_obj, str):
         render_string(x, y, render_obj)
 
