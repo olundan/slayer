@@ -1,47 +1,60 @@
-#
-#warrior_sprite = Sprite("  o |\n"
-#                        "(/*\\¥\n "
-#                        "/ \\\n ")
-##warrior = Archetype("Warrior", warrior_sprite)
-##warrior.strength = 10
-##warrior.wisdom = 0
-##warrior.agility = 5
-#
-#cyclops_sprite = Sprite(
-#        " /~~\\ \n"
-#        "(  O )\n"
-#        " \\__/ \n"
-#        "/|  |\\\n"
-#        " |  | \n"
-#        "/ \\/ \\"
-#        )
-#cyclops = Monster("Cyclops", cyclops_sprite)
-#cyclops.hitpoints = 100
-#cyclops.attack = 100
-#cyclops.exp_gain = 20
-#
-#small_cyclops_sprite = Sprite(
-#        " /~\\ \n"
-#        "( O )\n"
-#        " \\_/ \n"
-#        " /||\\\n"
-#        " / \\"
-#        )
-#small_cyclops = Monster("Cyclops.Jr", small_cyclops_sprite)
-#small_cyclops.hitpoints = 100
-#small_cyclops.attack = 100
-#small_cyclops.exp_gain = 10
-#
-#frame = Sprite("#######################################\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#                                     #\n"
-#               "#######################################")
+
+class Sprite:
+    def __init__(self, str_sprite: str):
+        self.pattern = self.build_pattern(str_sprite)
+        self.relational_map: list[tuple[int, int, str]] = self.build_rel_map()
+
+    def build_pattern(self, str_sprite: str):
+        return [list(line) for line in str_sprite.strip('\n').split('\n')]
+
+    def build_rel_map(self) -> list[tuple[int, int, str]]:
+        rel_map = []
+        for dy in range(len(self.pattern)):
+            for dx in range(len(self.pattern[dy])):
+                symbol = self.pattern[dy][dx]
+                if symbol != ' ':
+                    rel_map.append((dx, dy, symbol))
+        return rel_map
+
+warrior_sprite = Sprite("  o |\n"
+                        "(/*\\¥\n "
+                        "/ \\\n ")
+
+priest_sprite = Sprite("  o |\n"
+                        "(/*\\¥\n "
+                        "/ \\\n ")
+
+rouge_sprite = Sprite("  o |\n"
+                        "(/*\\¥\n "
+                        "/ \\\n ")
+
+cyclops_sprite = Sprite(
+        " /~~\\ \n"
+        "(  O )\n"
+        " \\__/ \n"
+        "/|  |\\\n"
+        " |  | \n"
+        "/ \\/ \\"
+        )
+
+small_cyclops_sprite = Sprite(
+        " /~\\ \n"
+        "( O )\n"
+        " \\_/ \n"
+        " /||\\\n"
+        " / \\"
+        )
+# frame w: 40, h:13
+frame = Sprite("########################################\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "#                                      #\n"
+               "########################################")

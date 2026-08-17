@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass, field
+from data import Sprite
 
 @dataclass
 class Stats:
@@ -30,9 +31,9 @@ class CharacterClass(Enum):
     PRIEST = ("Priest", "Helande")
     ROGUE = ("Rogue", "Smygande")
 
-    def __init__(self, display_name: str, description: str):
-        self.display_name = display_name
-        self.description = description
+    def __init__(self, name: str, description: str):
+        self.class_name = name
+        self.class_description = description
 
     @property
     def initial_stats(self) -> Stats:
@@ -44,20 +45,3 @@ class CharacterClass(Enum):
             case CharacterClass.ROGUE:
                 return Stats(hp=15, attack=8, defence=10)
 
-
-class Sprite:
-    def __init__(self, str_sprite: str):
-        self.pattern = self.build_pattern(str_sprite)
-        self.relational_map: list[tuple[int, int, str]] = self.build_rel_map()
-
-    def build_pattern(self, str_sprite: str):
-        return [list(line) for line in str_sprite.strip('\n').split('\n')]
-
-    def build_rel_map(self) -> list[tuple[int, int, str]]:
-        rel_map = []
-        for dy in range(len(self.pattern)):
-            for dx in range(len(self.pattern[dy])):
-                symbol = self.pattern[dy][dx]
-                if symbol != ' ':
-                    rel_map.append((dx, dy, symbol))
-        return rel_map

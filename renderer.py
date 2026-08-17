@@ -1,5 +1,6 @@
 import sys
 import time
+from data import Sprite
 
 CLEAR_SCREEN = "\033[2J"
 HIDE_CURSOR  = "\033[?25l"
@@ -7,26 +8,24 @@ SHOW_CURSOR  = "\033[?25h"
 HIGHLIGHT = "\033[7m"  
 RESET = "\033[0m"
 
-def render_string(x: int, y: int, txt: str):
-    move_cursor(x, y)
-    sys.stdout.write(f"{txt}")
+class DisplayBuffer:
+    def __init__(self):
+        self.width = 40
+        self.height = 13
+        self.grid = [[" " for _ in range(self.width)] for _ in range(self.height)]
 
-def render_string_slow(x: int, y: int, txt: str):
-    move_cursor(x, y)
-    for char in txt:
-        sys.stdout.write(f"{char}")
+    def clear_buffer(self):
+        self.grid = [[" " for _ in range(self.width)] for _ in range(self.height)]
+
+    def draw_char(self, x: int, y: int, char: str):
+        if 0 <= x < self.width and 0 <= y < self.height:
+            self.grid[y][x] = char
+
+    def draw_sprite(self, x: int, y: int, sprite):
+        for dx, dy, symbol in sprite.relational_map:
+            self.draw_char(x + dx, y + dy, symbol)
+
+    def render_buffer(self):
+        frame = "\033[1;1H" + "\n".join("".join(row) for row in self.grid)
+        sys.stdout.write(frame)
         sys.stdout.flush()
-        time.sleep(0.05)
-
-def render(x: int, y: int, render_obj):
-    if isinstance(render_obj, Sprite):
-        for dx, dy, symbol in render_obj.relational_map:
-            target_x = x + dx
-            target_y = y + dy
-
-            render_string(target_x, target_y, symbol)
-    elif isinstance(render_obj, str):
-        render_string(x, y, render_obj)
-
-def move_cursor(x: int, y: int):
-    sys.stdout.write(f"\033[{y};{x}H")

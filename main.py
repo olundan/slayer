@@ -1,5 +1,6 @@
-from game_state import Game, GameState
+from game import Game, GameState
 import sys
+import os
 
 # Microslop compgarbage
 if sys.platform == "win32":
@@ -16,12 +17,11 @@ def create_player(name: str, char_class: CharacterClass, sprite: Sprite, x: int 
         x=x,
         y=y,
         role=char_class.display_name,
-        description=char_class.description
     )
 
 def main():
     game = Game()
-    game.update()
+    game.run()
 
 if __name__ == "__main__":
     main()
