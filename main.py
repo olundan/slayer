@@ -1,6 +1,8 @@
 from game import Game, GameState
 import sys
 import os
+from entities import Player, CharacterClass
+from data import Sprite
 
 # Microslop compgarbage
 if sys.platform == "win32":
