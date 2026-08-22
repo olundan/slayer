@@ -3,6 +3,7 @@ from game import Game, GameState
 import sys
 import os
 from entities import CharacterClass
+from data import Sprite
 
 
 ##TODO
