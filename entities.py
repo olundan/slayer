@@ -1,6 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass, field
-from data import Sprite
+from sprite import Sprite
 
 @dataclass
 class Stats:

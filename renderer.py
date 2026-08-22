@@ -1,12 +1,4 @@
-import sys
-import time
 from data import Sprite
-
-CLEAR_SCREEN = "\033[2J"
-HIDE_CURSOR  = "\033[?25l"
-SHOW_CURSOR  = "\033[?25h"
-HIGHLIGHT = "\033[7m"  
-RESET = "\033[0m"
 
 class DisplayBuffer:
     def __init__(self, stdscr):

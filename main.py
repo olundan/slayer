@@ -1,7 +1,5 @@
 from curses import wrapper
 from game import Game, GameState
-import sys
-import os
 from entities import CharacterClass, Player
 from data import Sprite
 
@@ -13,13 +11,6 @@ from data import Sprite
 #[ ] roaming 
 #[ ] battlescene
 #[ ] character creation
-
-# Microslop compgarbage
-if sys.platform == "win32":
-    os.system("")  # Enables ANSI/VT100
-
-if hasattr(sys.stdout, 'reconfigure'):
-    sys.stdout.reconfigure(encoding='utf-8')  #UTF-8
 
 def create_player(name: str, char_class: CharacterClass, sprite: Sprite, x: int = 0, y: int = 0) -> Player:
     return Player(

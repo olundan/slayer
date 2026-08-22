@@ -1,4 +1,3 @@
-
 class Sprite:
     def __init__(self, str_sprite: str):
         self.pattern = self.build_pattern(str_sprite)

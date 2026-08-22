@@ -1,11 +1,10 @@
 import curses
 import time
 from enum import Enum, auto
-import sys
 from entities import Player
-from renderer import CLEAR_SCREEN, HIDE_CURSOR, DisplayBuffer
-from data import frame, warrior_sprite, cyclops_sprite
-from data import Sprite
+from renderer import DisplayBuffer
+from sprites import frame, warrior_sprite, cyclops_sprite
+from sprite import Sprite
 from input_handler import InputHandler, Action
 
 class GameState(Enum):

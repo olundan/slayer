@@ -1,8 +1,4 @@
 import curses
-import sys
-import select
-import tty
-import termios
 from enum import Enum, auto
 
 class Action(Enum):
