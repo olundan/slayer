@@ -1,3 +1,4 @@
+from curses import wrapper
 from game import Game, GameState
 import sys
 import os
@@ -27,11 +28,12 @@ def create_player(name: str, char_class: CharacterClass, sprite: Sprite, x: int 
         role=char_class.display_name,
     )
 
-def main():
-    game = Game()
+def main(stdscr):
+    game = Game(stdscr)
     game.run()
 
 if __name__ == "__main__":
-    main()
+    wrapper(main)
+
 
 

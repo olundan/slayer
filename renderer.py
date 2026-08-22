@@ -9,7 +9,8 @@ HIGHLIGHT = "\033[7m"
 RESET = "\033[0m"
 
 class DisplayBuffer:
-    def __init__(self):
+    def __init__(self, stdscr):
+        self.stdscr = stdscr
         self.width = 40
         self.height = 13
         self.grid = [[" " for _ in range(self.width)] for _ in range(self.height)]
@@ -26,6 +27,7 @@ class DisplayBuffer:
             self.draw_char(x + dx, y + dy, symbol)
 
     def render_buffer(self):
-        frame = "\033[1;1H" + "\n".join("".join(row) for row in self.grid)
-        sys.stdout.write(frame)
-        sys.stdout.flush()
+        self.stdscr.move(0, 0)
+        for y, row in enumerate(self.grid):
+            self.stdscr.addstr(y, 0, "".join(row))
+        self.stdscr.refresh()
