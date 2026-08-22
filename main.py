@@ -2,6 +2,7 @@ from curses import wrapper
 from game import Game, GameState
 import sys
 import os
+from entities import CharacterClass
 
 
 ##TODO
