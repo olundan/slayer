@@ -1,3 +1,4 @@
+import curses
 import time
 from enum import Enum, auto
 import sys
@@ -5,6 +6,7 @@ from entities import Player
 from renderer import CLEAR_SCREEN, HIDE_CURSOR, DisplayBuffer
 from data import frame, warrior_sprite, cyclops_sprite
 from data import Sprite
+from input_handler import InputHandler
 
 class GameState(Enum):
     INTRO = auto()
@@ -16,12 +18,16 @@ class GameState(Enum):
 class Game():
     def __init__(self, stdscr):
         self.display = DisplayBuffer(stdscr)
-        self.input = None
+        self.input = InputHandler(stdscr)
         self.state = GameState.BATTLE
         self.player_char = None
         self.current_mob = None
         self.is_running = True
+        self.menu = None
 
+        curses.noecho()
+        curses.cbreak()
+        stdscr.keypad(True)
     
     def run(self):
         self.update()
@@ -36,9 +42,10 @@ class Game():
             case GameState.EXPOSITION:
                 self.display.draw_sprite(0,0,warrior_sprite)
             case GameState.BATTLE:
-                self.display.draw_sprite(0,0,warrior_sprite)
-                self.display.draw_sprite(0,10,warrior_sprite)
-                self.display.render_buffer()
+                while True:
+                    self.display.draw_string(0,0, str(self.input.get_action()))
+                    self.display.render_buffer()
+                    self.display.clear_buffer()
 
     def change_state(self, new_state):
         if not isinstance(new_state, GameState):

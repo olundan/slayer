@@ -2,13 +2,12 @@ from curses import wrapper
 from game import Game, GameState
 import sys
 import os
-from entities import Player, CharacterClass
-from data import Sprite
 
 
 ##TODO
-#[/] Integrera curses
-#[ ] tisdagsdemo
+#[x] Integrera curses
+#[x] tisdagsdemo
+#[x] InputHandler
 #[ ] roaming 
 #[ ] battlescene
 #[ ] character creation
@@ -36,6 +35,7 @@ def main(stdscr):
 
 if __name__ == "__main__":
     wrapper(main)
+    main()
 
 
 

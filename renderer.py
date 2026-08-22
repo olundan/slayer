@@ -21,6 +21,12 @@ class DisplayBuffer:
     def draw_char(self, x: int, y: int, char: str):
         if 0 <= x < self.width and 0 <= y < self.height:
             self.grid[y][x] = char
+    
+    def draw_string(self, x: int, y: int, string: str):
+        pos_x = x
+        for char in string:
+            self.draw_char(pos_x, y, char)
+            pos_x += 1
 
     def draw_sprite(self, x: int, y: int, sprite):
         for dx, dy, symbol in sprite.relational_map:
