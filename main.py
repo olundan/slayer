@@ -2,7 +2,7 @@ from curses import wrapper
 from game import Game, GameState
 import sys
 import os
-from entities import CharacterClass
+from entities import CharacterClass, Player
 from data import Sprite
 
 
