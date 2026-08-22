@@ -2,6 +2,14 @@ from game import Game, GameState
 import sys
 import os
 
+
+##TODO
+#[/] Integrera curses
+#[ ] tisdagsdemo
+#[ ] roaming 
+#[ ] battlescene
+#[ ] character creation
+
 # Microslop compgarbage
 if sys.platform == "win32":
     os.system("")  # Enables ANSI/VT100

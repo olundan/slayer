@@ -16,36 +16,29 @@ class GameState(Enum):
 class Game():
     def __init__(self):
         self.display = DisplayBuffer()
+        self.input = None
         self.state = GameState.BATTLE
         self.player_char = None
         self.current_mob = None
         self.is_running = True
+
     
     def run(self):
         sys.stdout.write(CLEAR_SCREEN + HIDE_CURSOR)
         sys.stdout.flush()
         while self.is_running:
             self.update()
-            time.sleep(0.05)
 
     def update(self):
         match self.state:
             case GameState.CHAR_CREATION:
                 print(self.state)
             case GameState.ROAM:
-                pass
+                print(self.state)
             case GameState.EXPOSITION:
                 print(self.state)
             case GameState.BATTLE:
-                player_x = 3
-                player_y = 8
-                monster_x = 30
-                monster_y = 2
-                self.display.clear_buffer()
-                self.display.draw_sprite(0, 0, frame)
-                self.display.draw_sprite(player_x,player_y, warrior_sprite)
-                self.display.draw_sprite(monster_x, monster_y, cyclops_sprite)
-                self.display.render_buffer()
+                print(self.state)
 
     def change_state(self, new_state):
         if not isinstance(new_state, GameState):
