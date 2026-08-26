@@ -1,6 +1,6 @@
 from curses import wrapper
 import curses
-from game import Game, GameState
+from game import Game
 from entities import Player
 from data import Sprite
 

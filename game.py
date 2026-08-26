@@ -8,53 +8,54 @@ from sprite import Sprite
 from inputhandler import InputHandler, Action
 from menuhandler import MenuHandler, test_menu
 
-class GameState(Enum):
-    INTRO = auto()
-    CHAR_CREATION = auto()
-    EXPOSITION = auto()
-    ROAM= auto()
-    BATTLE = auto()
+
+class IntroScene():
+    def __init__(self, game):
+        self.game = game
+
+    def update(self):
+        self.print_intro()
+        return None
+
+    def print_intro(self):
+        intro_message = "Wake up adventurer!\nYou have been kindapped by\nan evil wizard! \nHe is keeping you locked\nin his labyrinth..\n"
+
+        line = 0
+        row = 0
+        for char in intro_message:
+            self.game.display.add_char(row,line, char)
+            row += 1
+            if char == "\n":
+                line += 1
+                row = 0
+
+            time.sleep(0.05)
+            self.game.display.render_buffer()
+
+class RoamingScene():
+    def __init__(self, game):
+        self.game = game
+
+    def update(self):
+        self.game.display.add_string(0,0, "Hello, World 2")
+        return None
 
 class Game():
     def __init__(self, stdscr):
         self.display = DisplayBuffer(stdscr)
         self.input = InputHandler(stdscr)
         self.menu = MenuHandler()
-        self.state = GameState.BATTLE
-        self.player_char = None
-        self.current_mob = None
+        self.current_scene = IntroScene(self)
         self.is_running = True
-
     
     def run(self):
         self.update()
-        self.display.stdscr.getkey()
 
     def update(self):
-        match self.state:
-            case GameState.CHAR_CREATION:
-                self.start_char_creation()
-            case GameState.ROAM:
-                self.start_roam()
-            case GameState.EXPOSITION:
-                self.start:exposition()
-            case GameState.BATTLE:
-                self.start_battle()
-        self.display.render_buffer()
-                
-    def change_state(self, new_state):
-        if not isinstance(new_state, GameState):
-            self.display.draw_char("Invalid new state")
-            return
-        self.state = new_state
+        next_scene = self.current_scene.update()
 
-    def start_battle(self):
-        menu = self.menu.get_menu_items(test_menu)
-        for option in menu:
-            self.display.draw_string(0,option[0],option[1])
-    def start_roam(self):
-        self.display.draw_string(0,0,"starting battle")
-    def start_char_creation(self):
-        self.display.draw_string(0,0,"char creation")
-    def start_exposition(self):
-        self.display.draw_string(0,0,"Expositionating")
+        if next_scene is not None:
+            self.current_scene = next_scene
+
+        self.display.render_buffer()
+        self.display.stdscr.getch() #Tillfällig för flowvisualisering
