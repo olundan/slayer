@@ -1,6 +1,7 @@
 from curses import wrapper
+import curses
 from game import Game, GameState
-from entities import CharacterClass, Player
+from entities import Player
 from data import Sprite
 
 
@@ -8,27 +9,25 @@ from data import Sprite
 #[x] Integrera curses
 #[x] tisdagsdemo
 #[x] InputHandler
+#[/] command
 #[ ] roaming 
 #[ ] battlescene
 #[ ] character creation
 
-def create_player(name: str, char_class: CharacterClass, sprite: Sprite, x: int = 0, y: int = 0) -> Player:
-    return Player(
-        name=name,
-        sprite=sprite,
-        stats=char_class.initial_stats,
-        x=x,
-        y=y,
-        role=char_class.display_name,
-    )
-
 def main(stdscr):
+    curses.noecho()
+    curses.cbreak()
+    curses.curs_set(0)
+    stdscr.keypad(True)
+    
     game = Game(stdscr)
     game.run()
 
+    while game.is_running:
+        game.update()
+
 if __name__ == "__main__":
     wrapper(main)
-    main()
 
 
 

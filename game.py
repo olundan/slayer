@@ -2,10 +2,11 @@ import curses
 import time
 from enum import Enum, auto
 from entities import Player
-from renderer import DisplayBuffer
+from displaybuffer import DisplayBuffer
 from sprites import frame, warrior_sprite, cyclops_sprite
 from sprite import Sprite
-from input_handler import InputHandler, Action
+from inputhandler import InputHandler, Action
+from menuhandler import MenuHandler, test_menu
 
 class GameState(Enum):
     INTRO = auto()
@@ -18,15 +19,12 @@ class Game():
     def __init__(self, stdscr):
         self.display = DisplayBuffer(stdscr)
         self.input = InputHandler(stdscr)
+        self.menu = MenuHandler()
         self.state = GameState.BATTLE
         self.player_char = None
         self.current_mob = None
         self.is_running = True
-        self.menu = None
 
-        curses.noecho()
-        curses.cbreak()
-        stdscr.keypad(True)
     
     def run(self):
         self.update()
@@ -35,34 +33,28 @@ class Game():
     def update(self):
         match self.state:
             case GameState.CHAR_CREATION:
-                self.display.draw_sprite(0,0,warrior_sprite)
+                self.start_char_creation()
             case GameState.ROAM:
-                self.display.draw_sprite(0,0,warrior_sprite)
+                self.start_roam()
             case GameState.EXPOSITION:
-                self.display.draw_sprite(0,0,warrior_sprite)
+                self.start:exposition()
             case GameState.BATTLE:
-                player_x = 0
-                player_y = 0
-                while True:
-                    action = self.input.get_action()
-                    match action:
-                        case Action.UP:
-                            player_y -= 1
-                        case Action.DOWN:
-                            player_y += 1
-                        case Action.LEFT:
-                            player_x -= 1
-                        case Action.RIGHT:
-                            player_x += 1
-                    self.display.draw_string(0,0, str(action))
-                    self.display.draw_sprite(player_x, player_y, warrior_sprite)
-                    self.display.render_buffer()
-                    self.display.clear_buffer()
-
-
+                self.start_battle()
+        self.display.render_buffer()
+                
     def change_state(self, new_state):
         if not isinstance(new_state, GameState):
             self.display.draw_char("Invalid new state")
             return
         self.state = new_state
 
+    def start_battle(self):
+        menu = self.menu.get_menu_items(test_menu)
+        for option in menu:
+            self.display.draw_string(0,option[0],option[1])
+    def start_roam(self):
+        self.display.draw_string(0,0,"starting battle")
+    def start_char_creation(self):
+        self.display.draw_string(0,0,"char creation")
+    def start_exposition(self):
+        self.display.draw_string(0,0,"Expositionating")
