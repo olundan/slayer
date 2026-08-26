@@ -1,10 +1,10 @@
 from data import Sprite
 
 class DisplayBuffer:
-    def __init__(self, stdscr):
+    def __init__(self, stdscr, height=13, width=40):
         self.stdscr = stdscr
-        self.width = 40
-        self.height = 13
+        self.width = width
+        self.height = height
         self.grid = [[" " for _ in range(self.width)] for _ in range(self.height)]
 
     def add_char(self, x: int, y: int, char: str):
