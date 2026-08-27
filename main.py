@@ -9,7 +9,6 @@ from data import Sprite
 #[x] Integrera curses
 #[x] tisdagsdemo
 #[x] InputHandler
-#[/] command
 #[ ] roaming 
 #[ ] battlescene
 #[ ] character creation

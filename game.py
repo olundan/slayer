@@ -1,3 +1,4 @@
+import random
 import curses
 import time
 from enum import Enum, auto
@@ -20,13 +21,64 @@ class IntroScene():
 
 class RoamingScene():
     def __init__(self):
-        pass
+        self.world = []
 
     def update(self, action):
+        if not self.world:
+            self.world = self.generate_prims_maze(39,13)
+
         return None
 
-    def draw(self):
-        pass
+    def draw(self, display):
+        map_sprite = Sprite(self.maze_to_string(self.world))
+        display.add_sprite(0,0, map_sprite)
+
+    def maze_to_string(self, maze: list[list[int]], wall_char: str = "█", path_char: str = " ") -> str:
+        return "\n".join(
+            "".join(wall_char if cell == 1 else path_char for cell in row)
+            for row in maze
+        )
+    
+    def generate_prims_maze(self, width: int, height: int) -> list[list[int]]:
+        # Dimensions muust be uneven
+        if width % 2 == 0:
+            width += 1
+        if height % 2 == 0:
+            height += 1
+
+        maze = [[1 for _ in range(width)] for _ in range(height)]
+
+        start_x = (width // 2) if (width // 2) % 2 != 0 else (width // 2) - 1
+        start_y = (height // 2) if (height // 2) % 2 != 0 else (height // 2) - 1
+
+        maze[start_y][start_x] = 0
+
+        frontier = []
+
+        def add_frontier(cx: int, cy: int):
+            directions = [(0, -2), (0, 2), (-2, 0), (2, 0)]
+            for dx, dy in directions:
+                nx, ny = cx + dx, cy + dy
+                if 0 < nx < width - 1 and 0 < ny < height - 1:
+                    if maze[ny][nx] == 1:
+                        frontier.append((cx + dx // 2, cy + dy // 2, nx, ny))
+
+        add_frontier(start_x, start_y)
+
+        while frontier:
+            idx = random.randint(0, len(frontier) - 1)
+            wx, wy, nx, ny = frontier.pop(idx)
+
+            if maze[ny][nx] == 1:
+                maze[wy][wx] = 0  
+                maze[ny][nx] = 0 
+                add_frontier(nx, ny)
+
+        maze[height - 2][width - 1] = 0  # Single Exit
+
+        return maze
+
+
 
 class Game():
     def __init__(self, curses_window):
@@ -36,7 +88,7 @@ class Game():
         self.ui = UIHandler()
 
         #game objects
-        self.current_scene = IntroScene()
+        self.current_scene = RoamingScene()
         self.player = Player(name="Oskar", sprite=warrior_sprite,stats=Stats(hp=10, attack=10, defence=10), x=0, y=0)
         self.is_running = True
     
