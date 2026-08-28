@@ -20,17 +20,20 @@ class IntroScene():
         pass
 
 class RoamingScene():
-    def __init__(self):
-        self.world = []
+    def __init__(self, player):
+        self.maze = []
+        self.player = player
 
     def update(self, action):
-        if not self.world:
-            self.world = self.generate_prims_maze(39,13)
+        maze_height = 13
+        maze_width = 39
+        if not self.maze:
+            self.maze = self.generate_prims_maze(maze_width, maze_height)
 
         return None
 
     def draw(self, display):
-        map_sprite = Sprite(self.maze_to_string(self.world))
+        map_sprite = Sprite(self.maze_to_string(self.maze))
         display.add_sprite(0,0, map_sprite)
 
     def maze_to_string(self, maze: list[list[int]], wall_char: str = "█", path_char: str = " ") -> str:
@@ -88,8 +91,8 @@ class Game():
         self.ui = UIHandler()
 
         #game objects
-        self.current_scene = RoamingScene()
         self.player = Player(name="Oskar", sprite=warrior_sprite,stats=Stats(hp=10, attack=10, defence=10), x=0, y=0)
+        self.current_scene = RoamingScene(self.player)
         self.is_running = True
     
     def run(self):
