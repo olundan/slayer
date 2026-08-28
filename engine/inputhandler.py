@@ -22,4 +22,9 @@ class InputHandler:
                 }
 
     def get_action(self) -> Action:
+        self.stdscr.nodelay(True)
+        return self.keymap.get(self.stdscr.getch())
+
+    def get_action_blocking(self) -> Action:
+        self.stdscr.nodelay(False)
         return self.keymap.get(self.stdscr.getch())

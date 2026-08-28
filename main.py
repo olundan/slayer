@@ -1,9 +1,6 @@
 from curses import wrapper
 import curses
 from game import Game
-from entities import Player
-from data import Sprite
-
 
 ##TODO
 #[x] Integrera curses

@@ -1,7 +1,7 @@
-from data import Sprite
+from entities.sprite import Sprite
 
 class DisplayBuffer:
-    def __init__(self, stdscr, height=13, width=40):
+    def __init__(self, stdscr, height=13, width=41):
         self.stdscr = stdscr
         self.width = width
         self.height = height

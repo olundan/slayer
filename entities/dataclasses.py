@@ -1,6 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass, field
-from sprite import Sprite
+from entities.sprite import Sprite
 
 
 @dataclass
