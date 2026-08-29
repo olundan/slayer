@@ -3,7 +3,7 @@ import curses
 import time
 from enum import Enum, auto
 
-from core import Stats, Entity, Player, Sprite
+from core import Stats, Entity, Player, Sprite, SceneID
 
 class EndingScene():
     def __init__(self, game):
