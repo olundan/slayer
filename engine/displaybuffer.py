@@ -30,5 +30,5 @@ class DisplayBuffer:
             try:
                 self.stdscr.addstr(y, 0, "".join(row))
             except curses.error:
-                pass  # Safely ignore the mandatory curses error on the bottom-right character
+                pass 
         self.stdscr.refresh()
