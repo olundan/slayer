@@ -15,7 +15,7 @@ class Sprite:
                     rel_map.append((dx, dy, symbol))
         return rel_map
     
-    def cropped(self, start_x: int, start_y: int, end_x: int, end_y: int) -> Sprite:
+    def cropped(self, start_x: int, start_y: int, end_x: int, end_y: int):
         new_sprite = Sprite("") 
         new_pattern = [row[start_x:end_x] for row in self.pattern[start_y:end_y]]
         new_sprite.pattern = new_pattern
