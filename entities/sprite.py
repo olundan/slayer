@@ -14,4 +14,17 @@ class Sprite:
                 if symbol != ' ':
                     rel_map.append((dx, dy, symbol))
         return rel_map
+    
+    def cropped(self, start_x: int, start_y: int, end_x: int, end_y: int) -> Sprite:
+        new_sprite = Sprite("") 
+        new_pattern = [row[start_x:end_x] for row in self.pattern[start_y:end_y]]
+        new_sprite.pattern = new_pattern
+        
+        new_sprite.relational_map = [
+            (dx - start_x, dy - start_y, symbol)
+            for dx, dy, symbol in self.relational_map
+            if start_x <= dx < end_x and start_y <= dy < end_y
+        ]
+        return new_sprite
+
 

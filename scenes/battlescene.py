@@ -6,17 +6,23 @@ from enum import Enum, auto
 from core import Stats, Entity, Player, Sprite, SceneID
 from engine import Action
 
-class EndingScene():
+from data.sprites import *
+
+class BattleScene():
     def __init__(self, game):
         self.display = game.display
+        self.player = game.player
 
     def update(self, action) -> SceneID | None:
         if not action == Action.ENTER:
             pass
         else:
-            return SceneID.INTRO
+            return SceneID.ROAM
         return None
 
     def draw(self):
-        self.display.add_string(0, 0, "You escaped!")
-        self.display.add_string(0, 1, "Press ENTER to start over.")
+        self.print_message("A monster appeared!")
+
+    def print_message(self, message):
+        self.display.add_sprite(1,8, text_frame)
+        self.display.add_string(3,9, message)

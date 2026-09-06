@@ -4,3 +4,4 @@ class SceneID(Enum):
     INTRO = auto()
     ROAM = auto()
     ENDING = auto()
+    BATTLE = auto()

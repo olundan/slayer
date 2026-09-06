@@ -16,43 +16,59 @@ class RoamingScene():
 
     def update(self, action) -> SceneID | None:
         if not self.escaped:
-            maze_height = 13
-            maze_width = 41
+            maze_height, maze_width = (10, 41)
             if not self.maze:
-                self.maze = self.generate_prims_maze(maze_width, maze_height)
-                self.player.x, self.player.y = self.calculate_center(maze_width, maze_height)
+                self.maze = self.generate_ascii_maze(maze_width, maze_height)
+                self.player.x, self.player.y = (15,15)
 
             try:
                 match action:
                     case Action.UP:
                         self.player.y -= 1
-                        if self.cordinates_is_wall(self.player.x, self.player.y):
-                            self.player.y += 1
                     case Action.DOWN:
                         self.player.y += 1
-                        if self.cordinates_is_wall(self.player.x, self.player.y):
-                            self.player.y -= 1
                     case Action.LEFT:
                         self.player.x -= 1
-                        if self.cordinates_is_wall(self.player.x, self.player.y):
-                            self.player.x += 1
                     case Action.RIGHT:
                         self.player.x += 1
-                        if self.cordinates_is_wall(self.player.x, self.player.y):
-                            self.player.x -= 1
             except IndexError:
                 self.escaped = True
         else:
             return SceneID.ENDING
+
         return None
 
     def cordinates_is_wall(self, x: int, y: int) -> bool:
         return self.maze[y][x] == 1
 
     def draw(self):
+        crop_start_x = self.player.x - 10
+        crop_start_y = self.player.y - 5
+        crop_end_x = self.player.x + 10
+        crop_end_y = self.player.y + 5
         map_sprite = Sprite(self.maze_to_string(self.maze))
-        self.display.add_sprite(0,0, map_sprite)
-        self.display.add_sprite(self.player.x, self.player.y, Sprite("@"))
+        self.display.add_sprite(0,0, map_sprite.cropped(crop_start_x,crop_start_y,crop_end_x,crop_end_y))
+        self.display.add_sprite(10,5, Sprite("@"))
+
+    def generate_ascii_maze(self, width: int, height: int, scale: int = 2) -> list[list[int]]:
+        base_maze = self.generate_prims_maze(width, height)
+        actual_height = len(base_maze)
+        actual_width = len(base_maze[0])
+
+        scaled_height = actual_height * scale
+        scaled_width = actual_width * scale
+
+        # 1 represents wall, 0 represents path
+        scaled_grid = [[1 for _ in range(scaled_width)] for _ in range(scaled_height)]
+
+        for y in range(actual_height):
+            for x in range(actual_width):
+                if base_maze[y][x] == 0:
+                    for dy in range(scale):
+                        for dx in range(scale):
+                            scaled_grid[y * scale + dy][x * scale + dx] = 0
+
+        return scaled_grid
 
     def maze_to_string(self, maze: list[list[int]], wall_char: str = "█", path_char: str = " ") -> str:
         return "\n".join(
@@ -102,3 +118,7 @@ class RoamingScene():
         center_x = (width // 2) if (width // 2) % 2 != 0 else (width // 2) - 1
         center_y = (height // 2) if (height // 2) % 2 != 0 else (height // 2) - 1
         return (center_x, center_y)
+
+    def print_message(self, message):
+        self.display.add_sprite(1,8, text_frame)
+        self.display.add_string(3,9, message)

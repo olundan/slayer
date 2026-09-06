@@ -1,10 +1,10 @@
+import curses
 from entities.sprite import Sprite
 
 class DisplayBuffer:
-    def __init__(self, stdscr, height=13, width=41):
+    def __init__(self, stdscr):
         self.stdscr = stdscr
-        self.width = width
-        self.height = height
+        self.height, self.width  = self.stdscr.getmaxyx()
         self.grid = [[" " for _ in range(self.width)] for _ in range(self.height)]
 
     def add_char(self, x: int, y: int, char: str):
@@ -27,5 +27,8 @@ class DisplayBuffer:
     def render_buffer(self):
         self.stdscr.move(0, 0)
         for y, row in enumerate(self.grid):
-            self.stdscr.addstr(y, 0, "".join(row))
+            try:
+                self.stdscr.addstr(y, 0, "".join(row))
+            except curses.error:
+                pass  # Safely ignore the mandatory curses error on the bottom-right character
         self.stdscr.refresh()
