@@ -12,14 +12,15 @@ class RoamingScene():
         self.display = game.display
         self.player = game.player
         self.maze = []
+        self.maze_height = 10
+        self.maze_width = 41
         self.escaped = False
 
     def update(self, action) -> SceneID | None:
         if not self.escaped:
-            maze_height, maze_width = (10, 41)
             if not self.maze:
-                self.maze = self.generate_ascii_maze(maze_width, maze_height)
-                self.player.x, self.player.y = (15,15)
+                self.maze = self.generate_ascii_maze(self.maze_width, self.maze_height)
+                self.player.x, self.player.y = self.calculate_center(self.maze_width, self.maze_height)
 
             try:
                 match action:
@@ -42,15 +43,15 @@ class RoamingScene():
         return self.maze[y][x] == 1
 
     def draw(self):
-        crop_start_x = self.player.x - 10
-        crop_start_y = self.player.y - 5
-        crop_end_x = self.player.x + 10
-        crop_end_y = self.player.y + 5
+        crop_start_x = self.player.x - self.maze_width // 2
+        crop_start_y = self.player.y - self.maze_height // 2
+        crop_end_x = self.player.x + self.maze_width // 2
+        crop_end_y = self.player.y + self.maze_height // 2
         map_sprite = Sprite(self.maze_to_string(self.maze))
         self.display.add_sprite(0,0, map_sprite.cropped(crop_start_x,crop_start_y,crop_end_x,crop_end_y))
-        self.display.add_sprite(10,5, Sprite("@"))
+        self.display.add_sprite(self.maze_width // 2,self.maze_height // 2, Sprite("@"))
 
-    def generate_ascii_maze(self, width: int, height: int, scale: int = 2) -> list[list[int]]:
+    def generate_ascii_maze(self, width: int, height: int, scale: int = 3) -> list[list[int]]:
         base_maze = self.generate_prims_maze(width, height)
         actual_height = len(base_maze)
         actual_width = len(base_maze[0])
