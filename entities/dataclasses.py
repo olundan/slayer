@@ -17,6 +17,7 @@ class Entity:
 
 @dataclass
 class Player(Entity):
+    lvl: int = 1
     x: int = 0
     y: int = 0
 

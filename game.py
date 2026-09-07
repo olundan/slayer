@@ -29,7 +29,6 @@ class Game():
         #game objects
         self.player = Player(name="Oskar", sprite=warrior_sprite,stats=Stats(hp=10, attack=10, defence=10), x=0, y=0)
         self.scenes = {}
-        self.current_scene = IntroScene(self)
         self.switch_scene(SceneID.INTRO)
         self.is_running = True
     

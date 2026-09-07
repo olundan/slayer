@@ -4,90 +4,85 @@ import time
 from enum import Enum, auto
 
 from core import Stats, Entity, Player, Sprite, SceneID
-from engine import Action
+from engine import Action, Camera
 
 class RoamingScene():
     def __init__(self, game):
-        self.game = game
-        self.display = game.display
-        self.player = game.player
-        self.maze = []
-        self.maze_height = 10
-        self.maze_width = 41
-        self.escaped = False
+        self.reset(game)
 
     def update(self, action) -> SceneID | None:
         if not self.escaped:
             if not self.maze:
-                self.maze = self.generate_ascii_maze(self.maze_width, self.maze_height)
-                self.player.x, self.player.y = self.calculate_center(self.maze_width, self.maze_height)
+                scale = 3
+                self.maze = self.generate_scaled_ascii_maze(self.maze_width, self.maze_height, scale)
+                self.player.x, self.player.y = self.calculate_center(self.maze_width * scale, self.maze_height * scale)
 
-            try:
-                match action:
-                    case Action.UP:
-                        self.player.y -= 1
-                    case Action.DOWN:
-                        self.player.y += 1
-                    case Action.LEFT:
-                        self.player.x -= 1
-                    case Action.RIGHT:
-                        self.player.x += 1
-            except IndexError:
-                self.escaped = True
+            match action:
+                case Action.UP:
+                    self.try_move(self.player, dx=0, dy=-1)
+                    if self.combat_roll():
+                        return SceneID.BATTLE
+                case Action.DOWN:
+                    self.try_move(self.player, dx=0, dy=1)
+                    if self.combat_roll():
+                        return SceneID.BATTLE
+                case Action.LEFT:
+                    self.try_move(self.player, dx=-1, dy=0)
+                    if self.combat_roll():
+                        return SceneID.BATTLE
+                case Action.RIGHT:
+                    self.try_move(self.player, dx=1, dy=0)
+                    if self.combat_roll():
+                        return SceneID.BATTLE
+
+
         else:
+            self.reset(self.game)
             return SceneID.ENDING
 
         return None
 
+    def try_move(self, character, dx: int, dy: int):
+        new_x = character.x + dx
+        new_y = character.y + dy
+
+        if not self.cordinates_is_wall(new_x, new_y):
+            character.x = new_x
+            character.y = new_y
+
     def cordinates_is_wall(self, x: int, y: int) -> bool:
-        return self.maze[y][x] == 1
+        #bug wating to happen (gonna fix soon tm)
+        try:
+            return self.maze[y][x] == 1
+        except IndexError:
+            self.escaped = True
+    
+    def combat_roll(self):
+        i = random.randint(0,100)
+        if i < 1:
+            return True
+        else:
+            False
 
     def draw(self):
-        crop_start_x = self.player.x - self.maze_width // 2
-        crop_start_y = self.player.y - self.maze_height // 2
-        crop_end_x = self.player.x + self.maze_width // 2
-        crop_end_y = self.player.y + self.maze_height // 2
-        map_sprite = Sprite(self.maze_to_string(self.maze))
-        self.display.add_sprite(0,0, map_sprite.cropped(crop_start_x,crop_start_y,crop_end_x,crop_end_y))
-        self.display.add_sprite(self.maze_width // 2,self.maze_height // 2, Sprite("@"))
+        camera = Camera(width=41, height=13)
+        camera.follow(self.player.x, self.player.y)
+        camera.draw_sprite(self.display, 0, 0, Sprite(self.maze_to_string(self.maze)))
+        camera.draw_sprite(self.display, self.player.x, self.player.y, Sprite("@"))
+        
+        debug_camera = Camera(width=80, height=24)
+        debug_camera.draw_sprite(self.display, 45,0, Sprite(f"Player_x: {self.player.x}"))
+        debug_camera.draw_sprite(self.display, 45,1, Sprite(f"Player_y: {self.player.y}"))
 
-    def generate_ascii_maze(self, width: int, height: int, scale: int = 3) -> list[list[int]]:
-        base_maze = self.generate_prims_maze(width, height)
-        actual_height = len(base_maze)
-        actual_width = len(base_maze[0])
-
-        scaled_height = actual_height * scale
-        scaled_width = actual_width * scale
-
-        # 1 represents wall, 0 represents path
-        scaled_grid = [[1 for _ in range(scaled_width)] for _ in range(scaled_height)]
-
-        for y in range(actual_height):
-            for x in range(actual_width):
-                if base_maze[y][x] == 0:
-                    for dy in range(scale):
-                        for dx in range(scale):
-                            scaled_grid[y * scale + dy][x * scale + dx] = 0
-
-        return scaled_grid
-
-    def maze_to_string(self, maze: list[list[int]], wall_char: str = "█", path_char: str = " ") -> str:
-        return "\n".join(
-            "".join(wall_char if cell == 1 else path_char for cell in row)
-            for row in maze
-        )
-    
-    def generate_prims_maze(self, width: int, height: int) -> list[list[int]]:
-        # Dimensions muust be uneven
+    def generate_scaled_ascii_maze(self, width: int, height: int, scale: int = 3) -> list[list[int]]:
+        # Dimensions must be odd
         if width % 2 == 0:
             width += 1
         if height % 2 == 0:
             height += 1
 
         maze = [[1 for _ in range(width)] for _ in range(height)]
-
         start_x, start_y = self.calculate_center(width, height)
-
         maze[start_y][start_x] = 0
 
         frontier = []
@@ -111,9 +106,38 @@ class RoamingScene():
                 maze[ny][nx] = 0 
                 add_frontier(nx, ny)
 
-        maze[height - 2][width - 1] = 0  # Single Exit
+        maze[height - 2][width - 1] = 0  # Single Exit (wants to be updated to randomize)
+        center_y, center_x = height // 2, width // 2
+        maze[center_y][center_x] = 0
+        maze[center_y][center_x + 1] = 0
+        maze[center_y][center_x + 2] = 0
+        maze[center_y][center_x + 3] = 0
+        maze[center_y][center_x - 1] = 0
+        maze[center_y][center_x - 2] = 0
+        maze[center_y][center_x - 3] = 0
+        maze[center_y + 1][center_x] = 0
+        maze[center_y + 2][center_x] = 0
+        maze[center_y + 3][center_x] = 0
 
-        return maze
+        scaled_height = height * scale
+        scaled_width = width * scale
+        scaled_grid = [[1 for _ in range(scaled_width)] for _ in range(scaled_height)]
+
+        for y in range(height):
+            for x in range(width):
+                if maze[y][x] == 0:
+                    for dy in range(scale):
+                        for dx in range(scale):
+                            scaled_grid[y * scale + dy][x * scale + dx] = 0
+
+        return scaled_grid
+
+    def maze_to_string(self, maze: list[list[int]], wall_char: str = "█", path_char: str = " ") -> str:
+        return "\n".join(
+            "".join(wall_char if cell == 1 else path_char for cell in row)
+            for row in maze
+        )
+    
     
     def calculate_center(self, width:int, height: int) -> (int, int):
         center_x = (width // 2) if (width // 2) % 2 != 0 else (width // 2) - 1
@@ -123,3 +147,12 @@ class RoamingScene():
     def print_message(self, message):
         self.display.add_sprite(1,8, text_frame)
         self.display.add_string(3,9, message)
+
+    def reset(self, game):
+        self.game = game
+        self.display = game.display
+        self.player = game.player
+        self.maze = []
+        self.maze_height = 19
+        self.maze_width = 41
+        self.escaped = False
